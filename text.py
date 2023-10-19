@@ -22,8 +22,8 @@ class UndoText(tk.Text):
         self.tk.call("rename", self._w, self._orig)
         self.tk.createcommand(self._w, self._proxy)
         self.bind("<<Paste>>", self.paste)
-        self._undo_stack: List[Tuple[Tuple, Tuple]] = []
-        self._redo_stack: List[Tuple[Tuple, Tuple]] = []
+        self._undo_stack: Stack = Stack()
+        self._redo_stack: Stack = Stack()
 
     def _proxy(self, *args: List[Union[str, int]]) -> str:
         """
@@ -49,6 +49,7 @@ class UndoText(tk.Text):
         Args:
             args: Arguments for the command.
         """
+        print(args)
         if args[1] == "end":
             index = self.index("end-1c")
         else:
@@ -56,7 +57,15 @@ class UndoText(tk.Text):
         if args[0] == "insert":
             undo_args = ("delete", index, "{}+{}c".format(index, len(args[2])))
         else:
-            undo_args = ("insert", index, self.get(*args[:1]))
+            if len(args) == 2:
+                undo_args = ("insert", index, self.get(self.index(args[1])))
+            else:
+                undo_args = (
+                    "insert",
+                    index,
+                    self.get(self.index(args[1]), self.index(args[2])),
+                )
+            print(f"{undo_args=}")
         self._clear_redo_stack()
         self._undo_stack.append((undo_args, args))
 
@@ -80,7 +89,8 @@ class UndoText(tk.Text):
         """
         Clear the redo stack to prevent redoing after making new changes.
         """
-        self._redo_stack.clear()
+        while not self._redo_stack.is_empty:
+            self._redo_stack.pop()
 
     def paste(self, event: tk.Event) -> None:
         """

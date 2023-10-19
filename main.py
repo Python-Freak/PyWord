@@ -6,6 +6,7 @@ from text import UndoText
 from typing import List, Union, Dict, Tuple
 
 APPNAME = "PyWord"
+CONSTANTS = {"normalFontSize": 15, "smallFontSize": 10, "largeFontSize": 25}
 
 
 class TextEditor:
@@ -18,9 +19,9 @@ class TextEditor:
         Initialize the TextEditor application.
         """
         self.root = tk.Tk()
-        self.root.geometry("600x600")
+        self.root.geometry("1000x600")
         self.root.title(APPNAME)
-
+        self.root.configure(bg="white")
         self.file_path = "Untitled"
         self.initial_dir = "./DOCS/"
         self.valid_file_types = (("Rich Text File", "*.rte"),)
@@ -28,7 +29,7 @@ class TextEditor:
         self.padding = 20
 
         self.text_area = UndoText(
-            self.root, font=f"{self.font_name} 15", relief=tk.FLAT
+            self.root, font=f"{self.font_name} {CONSTANTS["normalFontSize"]}", relief=tk.FLAT
         )
         self.text_area.pack(
             fill=tk.BOTH, expand=tk.TRUE, padx=self.padding, pady=self.padding
@@ -38,17 +39,17 @@ class TextEditor:
         self.text_area.bind("<Control-y>", lambda _: self.text_area.redo())
 
         self.styles: Dict[str, Dict[str, Union[str, str]]] = {
-            "Small": {"font": f"{self.font_name} 10"},
-            "Normal": {"font": f"{self.font_name} 15"},
-            "Larger": {"font": f"{self.font_name} 25"},
-            "Small Bold": {"font": f"{self.font_name} 10 bold"},
-            "Normal Bold": {"font": f"{self.font_name} 15 bold"},
-            "Larger Bold": {"font": f"{self.font_name} 25 bold"},
-            "Small Italic": {"font": f"{self.font_name} 10 italic"},
-            "Normal Italic": {"font": f"{self.font_name} 15 italic"},
-            "Larger Italic": {"font": f"{self.font_name} 25 italic"},
+            "Small": {"font": f"{self.font_name} {CONSTANTS['smallFontSize']}"},
+            "Normal": {"font": f"{self.font_name} {CONSTANTS["normalFontSize"]}"},
+            "Larger": {"font": f"{self.font_name} {CONSTANTS['largeFontSize']}"},
+            "Small Bold": {"font": f"{self.font_name} {CONSTANTS['smallFontSize']} bold"},
+            "Normal Bold": {"font": f"{self.font_name} {CONSTANTS["normalFontSize"]} bold"},
+            "Larger Bold": {"font": f"{self.font_name} {CONSTANTS['largeFontSize']} bold"},
+            "Small Italic": {"font": f"{self.font_name} {CONSTANTS['smallFontSize']} italic"},
+            "Normal Italic": {"font": f"{self.font_name} {CONSTANTS["normalFontSize"]} italic"},
+            "Larger Italic": {"font": f"{self.font_name} {CONSTANTS['largeFontSize']} italic"},
             "Code": {
-                "font": "Consolas 15",
+                "font": f"Consolas {CONSTANTS['normalFontSize']}",
                 "background": self.rgb2hex((200, 200, 200)),
             },
         }
